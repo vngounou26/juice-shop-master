@@ -9,13 +9,14 @@ import { BasketModel } from '../models/basket'
 import challengeUtils = require('../lib/challengeUtils')
 
 import * as utils from '../lib/utils'
+import { Session } from 'inspector'
 const security = require('../lib/insecurity')
 const challenges = require('../data/datacache').challenges
 
 module.exports = function retrieveBasket () {
   return (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id
-    const userId = req.user.id // recupération de l'id de l'utilisateur connecté
+    const userId = security.authenticatedUsers.from(req).data.userId
     BasketModel.findOne({ where: { id, userId }, include: [{ model: ProductModel, paranoid: false, as: 'Products' }] })
       .then((basket: BasketModel | null) => {
         /* jshint eqeqeq:false */
