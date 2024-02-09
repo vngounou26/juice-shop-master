@@ -30,12 +30,14 @@ module.exports = function servePublicFiles () {
       challengeUtils.solveIf(challenges.directoryListingChallenge, () => { return file.toLowerCase() === 'acquisitions.md' })
       verifySuccessfulPoisonNullByteExploit(file)
 
-      res.sendFile(path.resolve('ftp/', file))
+      // Use path.basename to prevent path Arbitrary file read
+      res.sendFile(path.resolve('ftp/', path.basename(file)))
     } else {
       res.status(403)
       next(new Error('Only .md and .pdf files are allowed!'))
     }
   }
+}
 
   function verifySuccessfulPoisonNullByteExploit (file: string) {
     challengeUtils.solveIf(challenges.easterEggLevelOneChallenge, () => { return file.toLowerCase() === 'eastere.gg' })
